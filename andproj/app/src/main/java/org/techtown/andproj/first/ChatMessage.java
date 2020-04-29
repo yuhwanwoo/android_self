@@ -1,4 +1,4 @@
-package org.techtown.andproj;
+package org.techtown.andproj.first;
 
 public class ChatMessage {
     private String id;

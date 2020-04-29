@@ -9,11 +9,12 @@
         android:icon="@drawable/ic_account_circle_black_24dp"
         app:showAsAction="always" />
     <item
-        android:id="@+id/user_name"
-        android:title="이름"
-        app:showAsAction="always" />
+        android:id="@+id/invitation_menu"
+        android:title="초대"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/sign_out_menu"
         android:title="로그아웃"
         app:showAsAction="ifRoom" />
+ 
 </menu>

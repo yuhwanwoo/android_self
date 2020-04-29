@@ -1,4 +1,4 @@
-package org.techtown.andproj;
+package org.techtown.andproj.first;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,7 +15,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,6 +23,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import org.techtown.andproj.R;
+
 public class SignInActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
     private SignInButton btn_google; // 구글 로그인 버튼
@@ -31,16 +32,24 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     private GoogleApiClient googleApiClient; //구글 API 클라이언트 객체
     private static final int REQ_SIGN_GOOGLE=100; // 구글 로그인 결과 코드
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) { //앱이 실행될 때 처음 수행되는 곳
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+
+
+
+
+
+
         GoogleSignInOptions googleSignInOptions=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                                                                     .requestIdToken(getString(R.string.default_web_client_id))
                                                                     .requestEmail().build();
 
-        googleApiClient=new GoogleApiClient.Builder(this).enableAutoManage(this,this).addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions).build();
+        googleApiClient=new GoogleApiClient.Builder(this).enableAutoManage(this,this)
+                                            .addApi(Auth.GOOGLE_SIGN_IN_API,googleSignInOptions).build();
 
         auth=FirebaseAuth.getInstance(); // 파이어베이스 인증 객체 초기화.
 
