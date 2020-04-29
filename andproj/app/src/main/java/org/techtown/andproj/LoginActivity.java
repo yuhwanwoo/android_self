@@ -39,6 +39,9 @@ public class LoginActivity extends AppCompatActivity {
         firebaseRemoteConfig =FirebaseRemoteConfig.getInstance();
         firebaseAuth=FirebaseAuth.getInstance();
 
+        //로그인 정보가 남아있어서 흰 화면뜨네(activity main 아무것도 안해서)
+        firebaseAuth.signOut();
+
         String splash_background= firebaseRemoteConfig.getString(getString(R.string.rc_color)); // 원격으로 할떄는 이걸로 색 바꾸면될듯
                                                             //mFirebaseRemoteConfig.getString("splash_color"));와 같은것
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -66,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        // 로그인 인터페이스 리스너
+        // 로그인 인터페이스 리스너 ( 로그인 됐는지 확인해주는 부분 )
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -75,6 +78,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 if (user != null) {
                     //로그인
+                    Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                    startActivity(intent);
+                    finish();
                 }else{
                     //로그아웃
                 }
@@ -96,5 +102,15 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebaseAuth.addAuthStateListener(authStateListener);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseAuth.removeAuthStateListener(authStateListener);
+    }
 }
