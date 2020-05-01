@@ -99,14 +99,14 @@ public class PeopleFragment extends Fragment {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(getView().getContext(), MessageActivity.class);
+                    Intent intent=new Intent(v.getContext(), MessageActivity.class);
 
                     // 위에 인텐트 선언했으므로 클릭한 상대방의 채팅방(MessageActivity)으로 옮긴다
                     intent.putExtra("destinationUid",usermodels.get(position).uid);
 
                     ActivityOptions activityOptions=null;
                     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
-                        activityOptions=ActivityOptions.makeCustomAnimation(getView().getContext(),R.anim.fromright,R.anim.toleft);
+                        activityOptions=ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fromright,R.anim.toleft);
                         startActivity(intent,activityOptions.toBundle());
                     }
                 }
