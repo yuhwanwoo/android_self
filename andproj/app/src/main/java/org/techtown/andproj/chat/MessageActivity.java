@@ -27,16 +27,28 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
+import org.jetbrains.annotations.NotNull;
 import org.techtown.andproj.R;
 import org.techtown.andproj.model.ChatModel;
+import org.techtown.andproj.model.NotificationModel;
 import org.techtown.andproj.model.Usermodel;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class MessageActivity extends AppCompatActivity {
 
@@ -50,6 +62,8 @@ public class MessageActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
 
     private SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy.MM.dd HH:mm");
+
+    private Usermodel destinationUsermodel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +107,12 @@ public class MessageActivity extends AppCompatActivity {
                     FirebaseDatabase.getInstance().getReference().child("chatrooms").child(chatRoomUid).child("comments").push().setValue(comment).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+
+                            sendGcm();
+
                             //전송 보내면 초기화
                             editText.setText("");
+
                         }
                     });
                 }
@@ -103,6 +121,43 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
         checkChatRoom();
+    }
+
+    //알람
+    void sendGcm(){
+        Gson gson= new Gson();
+
+        String userName=FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        NotificationModel notificationModel=new NotificationModel();
+        notificationModel.to=destinationUsermodel.pushToken;
+        notificationModel.notification.title=userName;
+        notificationModel.notification.text=editText.getText().toString();
+        //푸쉬를 보낼때 데이타 부분도 조립해서 보낸다.
+        notificationModel.data.title=userName;
+        notificationModel.data.text=editText.getText().toString();
+
+        //푸쉬를 받을때 데이터를 파싱하는 부분
+
+        RequestBody requestBody=RequestBody.create(MediaType.parse("application/json; chatset=utf-8"),gson.toJson(notificationModel));
+
+        Request request=new Request.Builder().header("Content-Type","application/json")
+                                                .addHeader("Authorization","key=AIzaSyA-n7dsLmvRFsKjEJJoWnTIkd1XhxaIgBg")
+                                                .url("https://fcm.googleapis.com/fcm/send")
+                                                .post(requestBody)
+                                                .build();
+        OkHttpClient okHttpClient=new OkHttpClient();
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+
+            }
+        });
+
     }
 
     //채팅방 중복을 체크해주는 코드
@@ -134,7 +189,7 @@ public class MessageActivity extends AppCompatActivity {
     class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         List<ChatModel.Comment> comments;
-        Usermodel usermodel;
+
         public RecyclerViewAdapter(){
 
             comments=new ArrayList<>();
@@ -142,7 +197,7 @@ public class MessageActivity extends AppCompatActivity {
             FirebaseDatabase.getInstance().getReference().child("users").child(destinationUid).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    usermodel=dataSnapshot.getValue(Usermodel.class);
+                    destinationUsermodel =dataSnapshot.getValue(Usermodel.class);
                     getMessageList();
                 }
 
@@ -206,9 +261,9 @@ public class MessageActivity extends AppCompatActivity {
                 //상대방이 보낸 메시지
             }else{//상대방일 경우
 
-                Glide.with(holder.itemView.getContext()).load(usermodel.profileImageUrl).apply(new RequestOptions().circleCrop())
+                Glide.with(holder.itemView.getContext()).load(destinationUsermodel.profileImageUrl).apply(new RequestOptions().circleCrop())
                                                                         .into(messageViewHolder.imageView_profile);
-                messageViewHolder.textview_name.setText(usermodel.userName);
+                messageViewHolder.textview_name.setText(destinationUsermodel.userName);
                 messageViewHolder.linearLayout_destination.setVisibility(View.VISIBLE);
                 messageViewHolder.textView_message.setBackgroundResource(R.drawable.leftbubble);
                 messageViewHolder.textView_message.setText(comments.get(position).message);

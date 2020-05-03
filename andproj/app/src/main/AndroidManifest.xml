@@ -30,11 +30,16 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".first.MyFcmService">
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service> <!-- 오래오 이상에서는 channel_id 는 필수이다(icon과 color는 필수 아님) -->
+        </service>
+
+        <!-- 오래오 이상에서는 channel_id 는 필수이다(icon과 color는 필수 아님) -->
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="default_channel_id" />

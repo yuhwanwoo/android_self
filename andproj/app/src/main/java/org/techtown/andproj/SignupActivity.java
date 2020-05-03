@@ -21,6 +21,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.storage.FirebaseStorage;
@@ -82,10 +83,7 @@ public class SignupActivity extends AppCompatActivity {
 
                     return;
                 }
-                Log.d("abcd","입력 후 클릭");
-                Log.d("abcd","입력이메일"+email.getText().toString());
-                Log.d("abcd","입력이름"+name.getText().toString());
-                Log.d("abcd","입력비번"+password.getText().toString());
+
                 FirebaseAuth.getInstance()
                         .createUserWithEmailAndPassword(email.getText().toString(),password.getText().toString())
                         .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
@@ -93,7 +91,13 @@ public class SignupActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
 
                                 final String uid=task.getResult().getUser().getUid();
-                                Log.d("abcd",""+FirebaseStorage.getInstance().getReference().child("userImages").child(uid).putFile(imageUri));
+
+                                //회원가입할떄의 자신의 이름을 알람에 넣는것
+                                UserProfileChangeRequest userProfileChangeRequest=new UserProfileChangeRequest.Builder().setDisplayName(name.getText().toString()).build();
+                                task.getResult().getUser().updateProfile(userProfileChangeRequest);
+
+
+                                //Log.d("abcd",""+FirebaseStorage.getInstance().getReference().child("userImages").child(uid).putFile(imageUri));
                                 FirebaseStorage.getInstance().getReference().child("userImages").child(uid).putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
