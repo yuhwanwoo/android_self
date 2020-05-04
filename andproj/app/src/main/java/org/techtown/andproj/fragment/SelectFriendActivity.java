@@ -1,24 +1,25 @@
 package org.techtown.andproj.fragment;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.app.ActivityOptions;
-import android.app.Fragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.firebase.ui.auth.data.model.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,36 +29,42 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.techtown.andproj.R;
 import org.techtown.andproj.chat.MessageActivity;
+import org.techtown.andproj.model.ChatModel;
 import org.techtown.andproj.model.Usermodel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PeopleFragment extends Fragment {
-    @Nullable
+public class SelectFriendActivity extends AppCompatActivity {
+    ChatModel chatModel=new ChatModel();
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View view=inflater.inflate(R.layout.fragment_people,container,false);
-        RecyclerView recyclerView=view.findViewById(R.id.peoplefragment_recyclerview);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_select_friend);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(inflater.getContext()));
-        recyclerView.setAdapter(new PeopleFragmentRecyclerViewAdapter());
+        RecyclerView recyclerView=findViewById(R.id.selectFriendActivity_recyclerview);
+        recyclerView.setAdapter(new SelectFriendRecyclerViewAdapter());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FloatingActionButton floatingActionButton=view.findViewById(R.id.peoplefragment_floatingButton);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+        Button button=findViewById(R.id.selectFriendActivity_button);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(view.getContext(),SelectFriendActivity.class));
+                String myUid=FirebaseAuth.getInstance().getCurrentUser().getUid();
+                //나까지 포함
+                chatModel.users.put(myUid,true);
+
+                FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel);
             }
         });
 
-        return view;
     }
 
-    class PeopleFragmentRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+    class SelectFriendRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         List<Usermodel> usermodels;
-        public PeopleFragmentRecyclerViewAdapter() {
+        public SelectFriendRecyclerViewAdapter() {
             usermodels=new ArrayList<>();
             final String myUid= FirebaseAuth.getInstance().getCurrentUser().getUid();
 
@@ -92,7 +99,7 @@ public class PeopleFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view=LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend,parent,false);
+            View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend_select,parent,false);
 
 
             return new CustomViewHolder(view);
@@ -126,7 +133,18 @@ public class PeopleFragment extends Fragment {
                 ((CustomViewHolder) holder).textView_comment.setText("");
             }
 
+            ((CustomViewHolder) holder).checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    //체크된 상태
+                    if(isChecked){
+                        chatModel.users.put(usermodels.get(position).uid,true);
 
+                    }else{//체크 취소 상태
+                        chatModel.users.remove(usermodels.get(position));
+                    }
+                }
+            });
         }
 
         @Override
@@ -138,12 +156,14 @@ public class PeopleFragment extends Fragment {
             public ImageView imageView;
             public TextView textView;
             public TextView textView_comment;
+            public CheckBox checkBox;
 
             public CustomViewHolder(View view) {
                 super(view);
                 imageView=view.findViewById(R.id.frienditem_imageview);
                 textView=view.findViewById(R.id.frienditem_textview);
                 textView_comment=view.findViewById(R.id.frienditem_textview_comment);
+                checkBox=view.findViewById(R.id.friendItem_checkbox);
             }
         }
     }

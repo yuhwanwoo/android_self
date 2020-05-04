@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".chat.MessageActivity"></activity>
+        <activity android:name=".chat.GroupMessageActivity"></activity>
+        <activity android:name=".fragment.SelectFriendActivity" />
+        <activity android:name=".chat.MessageActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SignupActivity" />
         <activity android:name=".LoginActivity" />
@@ -37,18 +39,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <!-- 오래오 이상에서는 channel_id 는 필수이다(icon과 color는 필수 아님) -->
-
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="default_channel_id" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_icon"
-            android:resource="@mipmap/ic_launcher" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_color"
-            android:resource="@color/colorAccent" />
     </application>
 
 </manifest>

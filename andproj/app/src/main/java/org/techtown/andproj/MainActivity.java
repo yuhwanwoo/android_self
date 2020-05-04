@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 
+import org.techtown.andproj.fragment.AccountFragment;
 import org.techtown.andproj.fragment.ChatFragment;
 import org.techtown.andproj.fragment.PeopleFragment;
 
@@ -38,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.action_chat:
                         getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new ChatFragment()).commit(); // 만약 fragment오류 뜨면 v4.fragment로 사용해야한대
                         return true;
-
+                    case R.id.action_account:
+                        getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout,new AccountFragment()).commit(); // 만약 fragment오류 뜨면 v4.fragment로 사용해야한대
+                        return true;
                 }
 
                 return false;
