@@ -9,6 +9,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class SelectFriendActivity extends AppCompatActivity {
                 chatModel.users.put(myUid,true);
 
                 FirebaseDatabase.getInstance().getReference().child("chatrooms").push().setValue(chatModel);
+                finish();
             }
         });
 
@@ -106,7 +108,7 @@ public class SelectFriendActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
 
             Glide.with(holder.itemView.getContext()).load(usermodels.get(position).profileImageUrl).apply(new RequestOptions().circleCrop()).into(((CustomViewHolder)holder).imageView);
 
@@ -115,8 +117,9 @@ public class SelectFriendActivity extends AppCompatActivity {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent=new Intent(v.getContext(), MessageActivity.class);
 
+
+                    Intent intent=new Intent(v.getContext(), MessageActivity.class);
                     // 위에 인텐트 선언했으므로 클릭한 상대방의 채팅방(MessageActivity)으로 옮긴다
                     intent.putExtra("destinationUid",usermodels.get(position).uid);
 
@@ -125,6 +128,7 @@ public class SelectFriendActivity extends AppCompatActivity {
                         activityOptions=ActivityOptions.makeCustomAnimation(v.getContext(),R.anim.fromright,R.anim.toleft);
                         startActivity(intent,activityOptions.toBundle());
                     }
+
                 }
             });
             if (usermodels.get(position).comment!=null){
@@ -144,7 +148,9 @@ public class SelectFriendActivity extends AppCompatActivity {
                         chatModel.users.remove(usermodels.get(position));
                     }
                 }
+
             });
+            Log.d("finishh","확인");
         }
 
         @Override

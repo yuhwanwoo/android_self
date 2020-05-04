@@ -257,7 +257,7 @@ public class GroupMessageActivity extends AppCompatActivity {
                 messageViewHolder.linearLayout_destination.setVisibility(View.INVISIBLE);
                 messageViewHolder.textView_message.setTextSize(25);
                 messageViewHolder.linearLayout_main.setGravity(Gravity.RIGHT);
-                //setReadCounter(position,messageViewHolder.textView_readCounter_left);
+                setReadCounter(position,messageViewHolder.textView_readCounter_left);
 
                 //상대방이 보낸 메시지
             }else{//상대방일 경우
