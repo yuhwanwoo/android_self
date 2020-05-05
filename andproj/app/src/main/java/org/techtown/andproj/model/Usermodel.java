@@ -6,5 +6,5 @@ public class Usermodel {
     public String uid;
     public String pushToken;
     public String comment;
-
+    public String address;
 }
