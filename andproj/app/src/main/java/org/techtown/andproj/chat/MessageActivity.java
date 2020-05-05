@@ -261,9 +261,6 @@ public class MessageActivity extends AppCompatActivity {
 
                     }
 
-
-
-
                 }
 
                 @Override
@@ -317,6 +314,7 @@ public class MessageActivity extends AppCompatActivity {
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
             String time=simpleDateFormat.format(date);
             messageViewHolder.textView_timestamp.setText(time);
+
 
         }
 

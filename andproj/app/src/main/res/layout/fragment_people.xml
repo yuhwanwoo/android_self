@@ -4,21 +4,87 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
     <LinearLayout
-        android:id="@+id/peoplefragment_myid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:id="@+id/idtitle"
+        android:background="@color/mColor"
         android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Friends"
+            android:textSize="20dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#ffffff"
+            />
+
+        <Button
+            android:id="@+id/sign_out_btn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/ic_keyboard_return_white_24dp"
+            android:layout_marginRight="10dp"
+            />
 
 
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="71dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/idtitle"
+        >
+        <ImageView
+            android:id="@+id/my_imageview"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/my_textview_name"
+            android:text="아이디"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"/>
+        <LinearLayout
+            android:gravity="center|right"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_marginRight="10dp"
+                android:background="@android:color/darker_gray"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/my_textview_comment"
+                    android:layout_margin="10dp"
+                    android:text="상태 메시지"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/interval_line"
+        android:background="#F4CFE0"
+        android:layout_below="@id/myview"
+        android:layout_width="match_parent"
+        android:layout_height="7dp"
+        android:layout_marginTop="6dp"
+        android:orientation="vertical">
+
+    </LinearLayout>
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/peoplefragment_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/peoplefragment_myid">
+        android:layout_below="@+id/interval_line"
+        >
 
     </androidx.recyclerview.widget.RecyclerView>
 

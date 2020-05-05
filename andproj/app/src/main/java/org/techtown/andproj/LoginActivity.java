@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth=FirebaseAuth.getInstance();
 
         //로그인 정보가 남아있어서 흰 화면뜨네(activity main 아무것도 안해서)
-        firebaseAuth.signOut();
+        //firebaseAuth.signOut();
 
         String splash_background= firebaseRemoteConfig.getString(getString(R.string.rc_color)); // 원격으로 할떄는 이걸로 색 바꾸면될듯
                                                             //mFirebaseRemoteConfig.getString("splash_color"));와 같은것

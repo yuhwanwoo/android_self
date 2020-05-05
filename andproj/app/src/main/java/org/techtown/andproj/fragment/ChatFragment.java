@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,7 +116,12 @@ public class ChatFragment extends Fragment {
                     Glide.with(customViewHolder.itemView.getContext()).load(usermodel.profileImageUrl).apply(new RequestOptions().circleCrop()).into(customViewHolder.imageView);
 
                     //채팅방 이름을 상대방 이름으로
-                    customViewHolder.textView_title.setText(usermodel.userName);
+                    if(chatModels.get(position).users.size()==2){
+                        customViewHolder.textView_title.setText(usermodel.userName);
+                    }else{
+                        customViewHolder.textView_title.setText("단체채팅방");
+                    }
+
                 }
 
                 @Override
@@ -128,8 +134,10 @@ public class ChatFragment extends Fragment {
             //메시지를 내림차순으로 정렬 후 마지막 메시지의 키값을 가져옴
             Map<String,ChatModel.Comment> commentMap=new TreeMap<>(Collections.reverseOrder());
             commentMap.putAll(chatModels.get(position).comments);
+
             if (commentMap.keySet().toArray().length>0) {
                 String lastMessageKey = (String) commentMap.keySet().toArray()[0];
+                Log.d("lastkkkkk",lastMessageKey);
                 customViewHolder.textView_last_message.setText(chatModels.get(position).comments.get(lastMessageKey).message);
 
 

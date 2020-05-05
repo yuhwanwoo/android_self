@@ -28,13 +28,13 @@ public class AccountFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_account,container,false);
 
-        Button button=view.findViewById(R.id.accountFragment_button_comment);
+        /*Button button=view.findViewById(R.id.accountFragment_button_comment);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog(v.getContext());
             }
-        });
+        });*/
 
         return view;
     }

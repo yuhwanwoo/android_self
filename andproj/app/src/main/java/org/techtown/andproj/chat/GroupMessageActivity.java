@@ -309,7 +309,7 @@ public class GroupMessageActivity extends AppCompatActivity {
                 if (count > 0) {
                     textView.setVisibility(View.VISIBLE);
                     textView.setText(String.valueOf(count));
-                }else {
+                }else{
                     textView.setVisibility(View.INVISIBLE);
                 }
             }
