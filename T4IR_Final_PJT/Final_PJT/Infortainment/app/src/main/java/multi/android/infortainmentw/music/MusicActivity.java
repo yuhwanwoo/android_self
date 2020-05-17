@@ -34,6 +34,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private ProgressUpdate progressUpdate;
     private int position;
 
+    private TextView playingTime;
+
 
 
     @Override
@@ -172,11 +174,20 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void run() {
             while (isPlaying){
+
                 try{
+                    String time="";
                 Thread.sleep(500);
+
                 if(mediaPlayer!=null){
+
                     seekBar.setProgress(mediaPlayer.getCurrentPosition());
+                    time = mediaPlayer.getCurrentPosition()+"";
+
                 }
+                System.out.println(time);
+                playingTime.setText(time);
+
             }catch (Exception e){
                     Log.e("ProgressUpdate",e.getMessage());
                 }

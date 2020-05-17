@@ -14,7 +14,9 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -32,13 +34,14 @@ public class MusicFragment extends Fragment{
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.activity_music_fragment,container,false);
-        listView=getActivity().findViewById(R.id.music_listview);
+        listView=view.findViewById(R.id.music_listview);
+        //MusicAdapter adapter=new MusicAdapter(list,getActivity());
         MusicAdapter adapter=new MusicAdapter(list,getActivity());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(view.getContext(),MusicActivity.class);
+                Intent intent=new Intent(getActivity(),MusicActivity.class);
                 intent.putExtra("position",position);
                 intent.putExtra("playlist",list);
                 startActivity(intent);

@@ -28,52 +28,61 @@ import multi.android.infortainmentw.R;
 
 public class MusicAdapter extends BaseAdapter {
 
+    Context context;
     ArrayList<MusicDTO> list;
     LayoutInflater inflater;
     Activity activity;
-    MusicFragment musicFragment;
 
     public MusicAdapter(){
 
     }
 
+ /*   public MusicAdapter(Context context, ArrayList<MusicDTO> list) {
+        this.context = context;
+        this.list = list;
+        inflater=LayoutInflater.from(context);
+    }*/
 
     public MusicAdapter(ArrayList<MusicDTO> list, Activity activity) {
+        Log.d("확인하는중",":::::listsize는(생)"+list.size());
+        Log.d("확인하는중","list는???"+list+":::::::::activitiy는??"+activity);
         this.list = list;
         this.activity = activity;
         Log.d("확인하는중","되는지");
         inflater= (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-    /*public MusicAdapter(MusicFragment fragment,ArrayList<MusicDTO> list){
-        this.list=list;
-        this.musicFragment=fragment;
-        inflater=fragment.getLayoutInflater();
-    }*/
 
+        Log.d("확인하는중",inflater+"::::::::::inflater값은");
+    }
 
 
 
     @Override
     public int getCount() {
+        Log.d("확인하는중",":::::::list.size는(getCount):"+list.size());
         return list.size();
     }
 
     @Override
     public Object getItem(int position) {
+        Log.d("확인하는중",":::::::getItem의 position:"+position);
         return position;
     }
 
     @Override
     public long getItemId(int position) {
+        Log.d("확인하는중",":::::getItenId의 position:"+position);
         return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("확인하는중",position+"");
         if(convertView==null){
             convertView=inflater.inflate(R.layout.musiclistview_item,parent,false);
+            //convertView=LayoutInflater.from(context).inflate(R.layout.musiclistview_item,parent,false);
             LinearLayout.LayoutParams layoutParams=new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
             convertView.setLayoutParams(layoutParams);
+
         }
 
         ImageView imageView=convertView.findViewById(R.id.album_item);

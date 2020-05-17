@@ -43,10 +43,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/playingtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"
+                />
             <SeekBar
                 android:id="@+id/seekbar"
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/closingtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00"/>
 
         </LinearLayout>
 
