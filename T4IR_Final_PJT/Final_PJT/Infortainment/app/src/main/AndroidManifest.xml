@@ -15,6 +15,7 @@
 
         <activity android:name=".music.MusicActivity"></activity>
         <activity android:name=".music.MusicFragment" />
+        <activity android:name=".music.PlayFragment"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

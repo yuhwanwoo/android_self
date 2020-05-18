@@ -11,7 +11,6 @@ public class MusicDTO implements Serializable {
     public MusicDTO(){
 
     }
-
     public MusicDTO(String id, String albumId, String title, String artist) {
         this.id = id;
         this.albumId = albumId;

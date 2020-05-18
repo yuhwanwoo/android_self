@@ -22,9 +22,12 @@ import multi.android.infortainmentw.music.MusicActivity;
 import multi.android.infortainmentw.music.MusicAdapter;
 import multi.android.infortainmentw.music.MusicDTO;
 import multi.android.infortainmentw.music.MusicFragment;
+import multi.android.infortainmentw.music.PlayFragment;
 
 public class MainActivity extends AppCompatActivity {
     MusicFragment musicFragment=new MusicFragment();
+    PlayFragment playFragment =new PlayFragment();
+
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         transaction = fragmentManager.beginTransaction();
         //transaction.replace(R.id.fragment_control,control);
         transaction.replace(R.id.fragment_music,musicFragment);
+
         transaction.commit();
 
     }

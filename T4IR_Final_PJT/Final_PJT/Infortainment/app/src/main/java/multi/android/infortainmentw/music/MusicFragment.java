@@ -4,13 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +30,7 @@ import multi.android.infortainmentw.R;
 
 public class MusicFragment extends Fragment{
     private ListView listView;
-    public  static ArrayList<MusicDTO> list;
+    public static ArrayList<MusicDTO> list;
 
 
     @Nullable
@@ -41,10 +45,31 @@ public class MusicFragment extends Fragment{
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent=new Intent(getActivity(),MusicActivity.class);
-                intent.putExtra("position",position);
+               // Intent intent=new Intent(getActivity(),MusicActivity.class);
+
+                PlayFragment playFragment=new PlayFragment();
+                MusicFragment musicFragment=new MusicFragment();
+
+                Bundle bundle=new Bundle();
+                bundle.putInt("position",position);
+                bundle.putString("posi","123");
+                bundle.putSerializable("playlist",list);
+                playFragment.setArguments(bundle);
+                Log.d("확인하는중","보내는 position::"+position);
+
+                FragmentManager fragmentManager;
+                fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction;
+                transaction = fragmentManager.beginTransaction();
+
+                transaction.replace(R.id.fragment_music,playFragment);
+                transaction.commit();
+
+
+                //Intent intent=new Intent(getActivity(),PlayFragment.class);
+                /*intent.putExtra("position",position);
                 intent.putExtra("playlist",list);
-                startActivity(intent);
+                startActivity(intent);*/
             }
         });
 
@@ -57,7 +82,6 @@ public class MusicFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getMusicList();
-
 
     }
 

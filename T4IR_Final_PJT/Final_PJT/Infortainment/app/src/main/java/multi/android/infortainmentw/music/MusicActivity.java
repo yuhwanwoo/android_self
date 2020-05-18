@@ -50,6 +50,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         seekBar=findViewById(R.id.seekbar);
 
         position=intent.getIntExtra("position",0);
+        Log.d("확인하는중",position+"::::::position값이야");
         list= (ArrayList<MusicDTO>) intent.getSerializableExtra("playlist");
         res=getContentResolver();
 
@@ -122,6 +123,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
             album.setImageBitmap(bitmap);
         }catch (Exception e){
             Log.e("SimplePlayer",e.getMessage());
+
         }
     }
 
@@ -182,6 +184,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 if(mediaPlayer!=null){
 
                     seekBar.setProgress(mediaPlayer.getCurrentPosition());
+
                     time = mediaPlayer.getCurrentPosition()+"";
 
                 }
