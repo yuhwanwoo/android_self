@@ -184,7 +184,6 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 if(mediaPlayer!=null){
 
                     seekBar.setProgress(mediaPlayer.getCurrentPosition());
-
                     time = mediaPlayer.getCurrentPosition()+"";
 
                 }

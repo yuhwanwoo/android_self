@@ -38,12 +38,14 @@
                 android:layout_height="match_parent"/>-->
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFFFFF"
             android:layout_weight="1"
             >
+
             <fragment
                 android:id="@+id/fragment_music"
                 android:name="multi.android.infortainmentw.music.MusicFragment"
