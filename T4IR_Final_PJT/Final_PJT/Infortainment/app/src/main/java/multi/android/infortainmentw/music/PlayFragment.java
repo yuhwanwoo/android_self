@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import java.util.ArrayList;
 
@@ -37,6 +40,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
     private ContentResolver res;
     private ProgressUpdate progressUpdate;
     private int position;
+    private Button musicback_btn;
 
     private TextView playingTime;
 
@@ -51,7 +55,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
         album=view.findViewById(R.id.album);
         seekBar=view.findViewById(R.id.seekbar);
 
-
+        musicback_btn=view.findViewById(R.id.musicback_btn);
 
 /*
         position=intent.getIntExtra("position",0);
@@ -67,6 +71,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
 
         list= (ArrayList<MusicDTO>) getArguments().getSerializable("playlist");
 
+        final MusicFragment musicFragment=new MusicFragment();
 
         previous=view.findViewById(R.id.pre);
         play=view.findViewById(R.id.play);
@@ -81,6 +86,19 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
         playMusic(list.get(position));
         progressUpdate=new ProgressUpdate();
         progressUpdate.start();
+
+        musicback_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager;
+                fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction transaction;
+                transaction = fragmentManager.beginTransaction();
+
+                transaction.replace(R.id.fragment_music,musicFragment);
+                transaction.commit();
+            }
+        });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

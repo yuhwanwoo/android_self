@@ -9,20 +9,28 @@
     android:background="#ffffff"
     >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#4a000000">
+        <Button
+            android:id="@+id/musicback_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/ic_skip_previous_black_24dp"/>
     <TextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:padding="10dp"
-        android:background="#4a000000"
         android:gravity="center"
         android:textSize="24dp"
         android:textColor="#fff"/>
-
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_weight="4"
         android:background="#3dffffff">
 
         <ImageView
@@ -42,7 +50,9 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            >
 
             <TextView
                 android:id="@+id/playingtime"
@@ -66,32 +76,37 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/pre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_skip_previous_black_24dp"/>
+                android:src="@drawable/ic_skip_previous_black_36dp"
+                android:layout_margin="5dp"/>
 
             <ImageView
                 android:id="@+id/play"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_play_arrow_black_24dp"
+                android:src="@drawable/ic_play_arrow_black_36dp"
+                android:layout_margin="5dp"
                 />
 
             <ImageView
                 android:id="@+id/pause"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_pause_black_24dp"/>
+                android:src="@drawable/ic_pause_black_36dp"
+                android:layout_margin="5dp"/>
 
             <ImageView
                 android:id="@+id/next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_skip_next_black_24dp"/>
+                android:src="@drawable/ic_skip_next_black_36dp"
+                android:layout_margin="5dp"/>
 
         </LinearLayout>
     </LinearLayout>

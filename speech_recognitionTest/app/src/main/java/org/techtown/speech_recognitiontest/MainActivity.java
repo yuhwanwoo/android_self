@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
             String[] ans={"누구세요?","나는 미리라고 해.","왜 부르셨나요?"};
             if (input.equals("종료")){
                 finish();
+                return;
             }
             if(cmd.equals("검색")){
                 String data=input.replace("검색 ", "");
