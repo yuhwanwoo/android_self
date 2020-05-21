@@ -1,6 +1,7 @@
 package multi.android.infortainmentw;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,11 +36,22 @@ public class MainActivity extends AppCompatActivity {
     MusicFragment musicFragment=new MusicFragment();
     PlayFragment playFragment =new PlayFragment();
 
+    //**********************************************************************
+    //음성인식 추가
+    Context cThis;
+    String LogTT="[STT]";
+
+    Intent SttIntent;
+    SpeechRecognizer mRecognizer;
+
     TextToSpeech tts;
-    Intent intent;
 
-    SpeechRecognizer recognizer;
+    Button btnSttStart;
 
+
+
+
+    //**********************************************************************
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -64,63 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         //음성인식부분
-        intent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getApplicationContext().getPackageName());
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
 
-        recognizer=SpeechRecognizer.createSpeechRecognizer(this);
-        recognizer.setRecognitionListener(listener);
 
     }
 
-    private RecognitionListener listener =new RecognitionListener() {
-        @Override
-        public void onReadyForSpeech(Bundle params) {
 
-        }
-
-        @Override
-        public void onBeginningOfSpeech() {
-
-        }
-
-        @Override
-        public void onRmsChanged(float rmsdB) {
-
-        }
-
-        @Override
-        public void onBufferReceived(byte[] buffer) {
-
-        }
-
-        @Override
-        public void onEndOfSpeech() {
-
-        }
-
-        @Override
-        public void onError(int error) {
-
-        }
-
-        @Override
-        public void onResults(Bundle results) {
-
-        }
-
-        @Override
-        public void onPartialResults(Bundle partialResults) {
-
-        }
-
-        @Override
-        public void onEvent(int eventType, Bundle params) {
-
-        }
-    };
-
-    private void toast(String msg){
-        Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
-    }
 }

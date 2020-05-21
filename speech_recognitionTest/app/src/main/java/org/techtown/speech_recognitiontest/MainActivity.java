@@ -29,6 +29,7 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     TextToSpeech tts;
+    SpeechRecognizer stt1;
 
 
     @Override
@@ -67,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
         ScrollView scroll =new ScrollView(this);
         scroll.setBackgroundColor(Color.WHITE);
         scroll.addView(layout);
-        setContentView(scroll);
+//        setContentView(scroll);
+/*
         tts=new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -75,8 +77,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+*/
 
-        mirithread mirithread=new mirithread();
+
+        Mirithread mirithread=new Mirithread();
         mirithread.start();
 
     }
@@ -159,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void replyAnswer(String input, TextView txt) {
+
         try {
             /*if (input.equals("안녕")) {
                 txt.append("[미리] 누구세요\n");
@@ -172,6 +177,14 @@ public class MainActivity extends AppCompatActivity {
                 txt.append("[미리] 무슨 말인지 모르겠어요.\n");
                 tts.speak("무슨 말인지 모르겠어요", TextToSpeech.QUEUE_FLUSH, null);
             }*/
+            tts.speak("안녕",TextToSpeech.QUEUE_FLUSH,null);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                }
+            },5000);
             String cmd = input.split(" ")[0];
             String[] que = {"안녕", "너는 누구니", "야"};
             String[] ans = {"누구세요?", "나는 미리라고 해.", "왜 부르셨나요?"};
@@ -229,50 +242,51 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this,msg,Toast.LENGTH_LONG).show();
     }
 
-    class mirithread extends Thread{
+    class Mirithread extends Thread{
 
         TextToSpeech tts1;
+
         @Override
         public void run() {
-
+            Log.d("확인","run시작");
+            tts1=new TextToSpeech(getApplication(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    tts1.setLanguage(Locale.KOREAN);
+                    Log.d("확인","korean세팅");
+                }
+            });
             while (true){
-
+                Log.d("확인","while시작");
             try {
-                final TextView txt=new TextView(getApplicationContext());
-                txt.setText("\n");
-                txt.setTextSize(18);
+                Log.d("확인","try시작");
 
-                Button input=new Button(getApplicationContext());
-                inputVoice1(txt);
-                LinearLayout layout=new LinearLayout(getApplicationContext());
-                layout.addView(input);
+                inputVoice1();
+
+
 
                 int pad=dip2px(10);
-                layout.setPadding(pad,pad,pad,pad);
 
-                ScrollView scroll =new ScrollView(getApplicationContext());
-                scroll.setBackgroundColor(Color.WHITE);
-                scroll.addView(layout);
 
-                tts1=new TextToSpeech(getApplication(), new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(int status) {
-                        tts1.setLanguage(Locale.KOREAN);
-                    }
-                });
-//            setContentView(scroll);
+
+                //tts1.speak("안녕하세요요요",TextToSpeech.QUEUE_FLUSH,null);
+                Log.d("확인","test");
+
+
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }}
+                break;
+            }
+            }
         }
 
-        private void inputVoice1(final TextView txt) {
+        private void inputVoice1() {
             try {
                 Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
                 intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getApplication().getPackageName());
                 intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-Kr");
-                final SpeechRecognizer stt1=SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
+                stt1=SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
                 stt1.setRecognitionListener(new RecognitionListener() {
                     @Override
                     public void onReadyForSpeech(Bundle params) {
@@ -308,7 +322,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResults(Bundle results) {
                         ArrayList<String> result= (ArrayList<String>) results.get(SpeechRecognizer.RESULTS_RECOGNITION);
-                        txt.append("[나]"+result.get(0)+"\n");
 
                         //1초 딜레이를 주기 위함 나는 딜레이 주기 싫어서 그냥 빼서 씀
                     /*new Handler().postDelayed(new Runnable() {
@@ -317,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                             replyAnswer(result.get(0),txt);
                         }
                     },1000);*/
-                        replyAnswer1(result.get(0),txt);
+                        replyAnswer1(result.get(0));
 
 
                         stt1.destroy();
@@ -339,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        private void replyAnswer1(String input, TextView txt) {
+        private void replyAnswer1(String input) {
             try {
             /*if (input.equals("안녕")) {
                 txt.append("[미리] 누구세요\n");
@@ -362,7 +375,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 if (cmd.equals("검색")) {
                     String data = input.replace("검색 ", "");
-                    txt.append("[미리] " + data + "에 대한 검색 결과입니다.\n");
                     tts1.speak(data + "에 대한 검색 결과입니다.", TextToSpeech.QUEUE_FLUSH, null);
                     Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
                     intent.putExtra("value", data);
@@ -370,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (input.equals("날씨")) {
-                    txt.append("[미리] 전국 날씨 입니다.\n");
+                    Toast.makeText(getApplication(),"[미리] 전국 날씨 입니다",Toast.LENGTH_SHORT).show();
                     tts1.speak("전국 날씨입니다.", TextToSpeech.QUEUE_FLUSH, null);
                     Intent intent = new Intent(getApplicationContext(), WebViewActivity.class);
                     intent.putExtra("value", "전국 날씨");
@@ -378,14 +390,15 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (input.equals("음악")) {
-                    txt.append("[미리] 음악을 재생합니다.\n");
+
+                    Toast.makeText(getApplication(),"[미리] 음악을 재생합니다.",Toast.LENGTH_SHORT).show();
                     tts1.speak("음악을 재생합니다.", TextToSpeech.QUEUE_FLUSH, null);
                     Intent intent = new Intent(getApplicationContext(), MusicService.class);
                     startService(intent);
                     return;
                 }
                 if (input.equals("음악 정지")) {
-                    txt.append("[미리] 음악을 정지합니다.\n");
+                    Toast.makeText(getApplication(),"[미리] 음악을 정지합니다.",Toast.LENGTH_SHORT).show();
                     tts1.speak("음악을 정지합니다.", TextToSpeech.QUEUE_FLUSH, null);
                     Intent intent = new Intent(getApplicationContext(), MusicService.class);
                     stopService(intent);
@@ -394,12 +407,14 @@ public class MainActivity extends AppCompatActivity {
 
                 for (int i = 0; i < que.length; i++) {
                     if (input.equals(que[i])) {
-                        txt.append("[미리] " + ans[i] + "\n");
+                        //txt.append("[미리] " + ans[i] + "\n");
+                        Toast.makeText(getApplication(),"[미리]"+ans[i],Toast.LENGTH_SHORT).show();
                         tts1.speak(ans[i], TextToSpeech.QUEUE_FLUSH, null);
                         return;
                     }
                 }
-                txt.append("[미리] 무슨 말인지 모르겠어요.\n");
+                //txt.append("[미리] 무슨 말인지 모르겠어요.\n");
+                Toast.makeText(getApplication(),"[미리] 무슨 말인지 모르겠어요",Toast.LENGTH_SHORT).show();
                 tts1.speak("무슨 말인지 모르겠어요.", TextToSpeech.QUEUE_FLUSH, null);
             } catch (Exception e) {
                 e.printStackTrace();

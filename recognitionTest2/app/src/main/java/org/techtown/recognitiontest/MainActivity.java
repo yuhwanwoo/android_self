@@ -10,15 +10,21 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
+import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         mRecognizer=SpeechRecognizer.createSpeechRecognizer(cThis);
         mRecognizer.setRecognitionListener(listener);
 
+
+        //음성 출력 생성, 리스너 초기화
         tts=new TextToSpeech(cThis, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
@@ -90,9 +98,146 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                txtSystem.setText("어플 실행됨~~ 자동 실행");
+                txtSystem.setText("어플 실행됨~~ 자동 실행:::::::::::"+"\r\n"+txtSystem.getText());
+                btnSttStart.performClick();
             }
         },1000);
 
+        //stt가 일정 시간이 되면 죽기 때문에 일정 시간에 한번씩 계속 실행 처리
+        // 테스트를 위한거라 실제에선 절대 쓰면 안된다네 왜지..?
+       final Handler handler=new Handler(){
+            public void handleMessage(Message msg){
+                btnSttStart.performClick();
+            }
+        };
+
+        Timer timer=new Timer(true);
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                Message msg=handler.obtainMessage();
+                Log.i(LogTT,msg+"::::::::::msg에요");
+                handler.sendMessage(msg);
+            }
+
+            @Override
+            public boolean cancel() {
+                return super.cancel();
+            }
+        };
+        timer.schedule(timerTask,0,5000); // 5초에 한번씩 버튼 클릭하기...
+    }
+
+    private RecognitionListener listener=new RecognitionListener() {
+        @Override
+        public void onReadyForSpeech(Bundle params) {
+            txtSystem.setText("onReadyForSpeech::::::::::::::::"+"\r\n"+txtSystem.getText());
+        }
+
+        @Override
+        public void onBeginningOfSpeech() {
+            txtSystem.setText("지금부터 말하세요:::::::::"+"\r\n"+txtSystem.getText());
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB) {
+
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer) {
+            txtSystem.setText("onBufferReceived::::::::::::::::"+"\r\n"+txtSystem.getText());
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+            txtSystem.setText("onEndOfSpeech:::: 종료됨::::::::::"+"\r\n"+txtSystem.getText());
+        }
+
+        @Override
+        public void onError(int error) {
+            Log.i(LogTT,"ERROR : 천천히 다시 말해주세요1::::::::::::");
+            txtSystem.setText("천천히 다시 말해주세요:::::::::::"+"\r\n"+txtSystem.getText());
+
+        }
+
+        @Override
+        public void onResults(Bundle results) {
+            String key="";
+            key=SpeechRecognizer.RESULTS_RECOGNITION;
+            ArrayList<String> mResult =results.getStringArrayList(key);
+            String[] rs=new String[mResult.size()];
+            mResult.toArray(rs);
+
+            Log.i(LogTT,"입력값 : "+rs[0]);
+            txtInMsg.setText(rs[0]+"\r\n"+txtInMsg.getText());
+            Log.i(LogTT,"입력값getText : "+txtInMsg.getText());
+
+            FunVoiceOrderCheck(rs[0]);
+
+            mRecognizer.startListening(SttIntent); // 음성인식이 계속되는 구문이니 필요에 맞게 쓰길
+        }
+
+        @Override
+        public void onPartialResults(Bundle partialResults) {
+            Log.i(LogTT,"onPartialResults:::::::::::");
+            txtSystem.setText("onPartialResults:::::::::::"+"\r\n"+txtSystem.getText());
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params) {
+            Log.i(LogTT,"onEvent::::::::::::");
+            txtSystem.setText("onEvent:::::::::::::::"+"\r\n"+txtSystem.getText());
+        }
+    };
+    //입력한 음성 메시지 확인 후 동작 처리.
+    private void FunVoiceOrderCheck(String VoiceMsg){
+        if(VoiceMsg.length()<1) return;
+
+        VoiceMsg=VoiceMsg.replace(" ", ""); //공백 제거
+
+        if(VoiceMsg.indexOf("미리야")>-1){
+            tts.setSpeechRate(0.2f);
+            FunVoiceOut("네");
+            tts.setSpeechRate(1.0f);
+        }
+
+        if(VoiceMsg.indexOf("전등켜")>-1||VoiceMsg.indexOf("불켜")>-1){
+            Log.i(LogTT,"메시지 확인 : 전등 ON");
+            imgViewLight.setImageAlpha(255);
+            FunVoiceOut("전등을 켰습니다.");
+        }
+        if(VoiceMsg.indexOf("전등꺼")>-1|| VoiceMsg.indexOf("불꺼")>-1){
+            Log.i(LogTT,"메시지 확인 : 전등 OFF");
+            imgViewLight.setImageAlpha(50);
+            FunVoiceOut("전등을 끕니다.");
+        }
+    }
+
+    private void FunVoiceOut(String OutMsg){
+        if(OutMsg.length()<1){
+            return;
+        }
+
+        tts.setPitch(1.5f); //1.5톤 올려서
+        tts.setSpeechRate(1.0f); //1배속으로  읽기
+        tts.speak(OutMsg,TextToSpeech.QUEUE_FLUSH,null);
+    }
+
+    //어플이 종료될떄때 완전 제거
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(tts!=null){
+            tts.stop();
+            tts.shutdown();
+            tts=null;
+        }
+        if(mRecognizer!=null){
+            mRecognizer.destroy();
+            mRecognizer.cancel();
+            mRecognizer=null;
+        }
     }
 }
