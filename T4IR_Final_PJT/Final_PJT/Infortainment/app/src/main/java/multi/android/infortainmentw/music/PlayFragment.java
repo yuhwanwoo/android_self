@@ -65,9 +65,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener{
         position=getArguments().getInt("position",100);
         Log.d("확인중",position+"::::position값이야");
 
-        String posi="";
-        posi=getArguments().getString("posi");
-        Log.d("확인하는중",posi);
+
 
         list= (ArrayList<MusicDTO>) getArguments().getSerializable("playlist");
 
