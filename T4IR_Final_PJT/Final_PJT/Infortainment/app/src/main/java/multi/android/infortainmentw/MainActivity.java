@@ -250,8 +250,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if (VoiceMsg.equals("음악")) {
             tts.speak("음악을 재생합니다.", TextToSpeech.QUEUE_FLUSH, null);
-            Intent intent = new Intent(this, MusicService.class);
-            startService(intent);
+            /*Intent intent = new Intent(this, MusicService.class);
+            startService(intent);*/
 
             Bundle bundle=new Bundle();
             bundle.putInt("position",0);
@@ -267,10 +267,15 @@ public class MainActivity extends AppCompatActivity {
             transaction.commit();
             return;
         }
-        if (VoiceMsg.equals("음악 정지")) {
+        if (VoiceMsg.equals("음악정지")) {
             tts.speak("음악을 정지합니다.", TextToSpeech.QUEUE_FLUSH, null);
-            Intent intent = new Intent(this, MusicService.class);
-            stopService(intent);
+            FragmentManager fragmentManager;
+            fragmentManager = this.getSupportFragmentManager();
+            FragmentTransaction transaction;
+            transaction = fragmentManager.beginTransaction();
+
+            transaction.replace(R.id.fragment_music,musicFragment);
+            transaction.commit();
             return;
         }
         //*****************************************************************************************************
