@@ -8,6 +8,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -21,6 +22,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Timer;
@@ -44,6 +52,17 @@ public class MainActivity extends AppCompatActivity {
     EditText txtSystem; // 시스템 메시지
     ImageView imgViewLight; // 전등 이지
 
+    //서버 전송용
+    Socket socket;
+    String andId;
+    SpeechAsyncTast speechAsyncTast;
+    InputStream is;
+    InputStreamReader isr;
+    BufferedReader br;
+    OutputStream os;
+    PrintWriter pw;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -52,12 +71,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        speechAsyncTast=new SpeechAsyncTast();
+        speechAsyncTast.execute();
+
         SttIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         SttIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getApplicationContext().getPackageName());
         SttIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR");
         mRecognizer=SpeechRecognizer.createSpeechRecognizer(cThis);
         mRecognizer.setRecognitionListener(listener);
 
+        andId="noo";
 
         //음성 출력 생성, 리스너 초기화
         tts=new TextToSpeech(cThis, new TextToSpeech.OnInitListener() {
@@ -126,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         timer.schedule(timerTask,0,5000); // 5초에 한번씩 버튼 클릭하기...
+
     }
 
     private RecognitionListener listener=new RecognitionListener() {
@@ -239,5 +263,41 @@ public class MainActivity extends AppCompatActivity {
             mRecognizer.cancel();
             mRecognizer=null;
         }
+    }
+
+    class SpeechAsyncTast extends AsyncTask<Integer,String,String>{
+
+        @Override
+        protected String doInBackground(Integer... integers) {
+            try {
+                socket=new Socket("70.12.227.93",12345);
+                Log.d("확인","socket다음");
+                if (socket!=null){
+                    speechWork();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return "";
+        }
+
+        void speechWork(){
+            try {
+                is=socket.getInputStream();
+                isr=new InputStreamReader(is);
+                br=new BufferedReader(isr);
+
+                os=socket.getOutputStream();
+                pw=new PrintWriter(os,true);
+                pw.println("phone/"+andId);
+                pw.flush();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
     }
 }
