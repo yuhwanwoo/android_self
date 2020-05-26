@@ -29,7 +29,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     PrintWriter pw;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -71,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        speechAsyncTast=new SpeechAsyncTast();
-        speechAsyncTast.execute();
 
         SttIntent=new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         SttIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getApplicationContext().getPackageName());
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 }else{
                     //권한을 허용한 경우
                     try {
+                        Log.d(LogTT,"클릭의 lestener안");
                         mRecognizer.startListening(SttIntent);
                     }catch (SecurityException e){
                         e.printStackTrace();
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 txtSystem.setText("어플 실행됨~~ 자동 실행:::::::::::"+"\r\n"+txtSystem.getText());
                 btnSttStart.performClick();
             }
-        },1000);
+        },10000000);
 
         //stt가 일정 시간이 되면 죽기 때문에 일정 시간에 한번씩 계속 실행 처리
         // 테스트를 위한거라 실제에선 절대 쓰면 안된다네 왜지..?
@@ -148,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.cancel();
             }
         };
-        timer.schedule(timerTask,0,5000); // 5초에 한번씩 버튼 클릭하기...
+        timer.schedule(timerTask,0,3000); // 5초에 한번씩 버튼 클릭하기...
 
     }
 
@@ -188,6 +191,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResults(Bundle results) {
             String key="";
+            Date date=new Date(System.currentTimeMillis());
+            SimpleDateFormat sdfNow=new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+            String formatDate=sdfNow.format(date);
+
             key=SpeechRecognizer.RESULTS_RECOGNITION;
             ArrayList<String> mResult =results.getStringArrayList(key);
             String[] rs=new String[mResult.size()];
@@ -195,11 +202,17 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i(LogTT,"입력값 : "+rs[0]);
             txtInMsg.setText(rs[0]+"\r\n"+txtInMsg.getText());
-            Log.i(LogTT,"입력값getText : "+txtInMsg.getText());
+
 
             FunVoiceOrderCheck(rs[0]);
 
+            speechAsyncTast=new SpeechAsyncTast();
+            speechAsyncTast.execute(rs[0],formatDate);
+
+
             mRecognizer.startListening(SttIntent); // 음성인식이 계속되는 구문이니 필요에 맞게 쓰길
+
+
         }
 
         @Override
@@ -263,41 +276,75 @@ public class MainActivity extends AppCompatActivity {
             mRecognizer.cancel();
             mRecognizer=null;
         }
+
+        try {
+            if(socket!=null){
+                socket.close();
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
-    class SpeechAsyncTast extends AsyncTask<Integer,String,String>{
+    class SpeechAsyncTast extends AsyncTask<String,String,String>{
 
-        @Override
-        protected String doInBackground(Integer... integers) {
-            try {
-                socket=new Socket("70.12.227.93",12345);
-                Log.d("확인","socket다음");
-                if (socket!=null){
-                    speechWork();
+
+
+            @Override
+            protected String doInBackground (String...strings){
+                try {
+                    socket = new Socket("70.12.227.93", 12345);
+                    Log.d("확인", "socket다음");
+                    if (socket != null) {
+                        speechWork(strings[0],strings[1]);
+                    }
+                    Thread t1 = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            while (true) {
+                                String msg;
+                                try {
+                                    msg = br.readLine();
+                                    Log.d("확인", "서버로 부터 수신된 메시지>>" + msg);
+                                } catch (IOException e) {
+                                    try {
+                                        is.close();
+                                        isr.close();
+                                        br.close();
+                                        os.close();
+                                        pw.close();
+                                        socket.close();
+                                    } catch (IOException e1) {
+                                        e1.printStackTrace();
+                                    }
+                                    break;//반복문 빠져나가도록 설정
+                                }
+                            }
+                        }
+                    });
+                    t1.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                return "";
             }
 
-            return "";
-        }
+            void speechWork (String speech,String sysdate) {
+                try {
+                    is = socket.getInputStream();
+                    isr = new InputStreamReader(is);
+                    br = new BufferedReader(isr);
 
-        void speechWork(){
-            try {
-                is=socket.getInputStream();
-                isr=new InputStreamReader(is);
-                br=new BufferedReader(isr);
+                    os = socket.getOutputStream();
+                    pw = new PrintWriter(os, true);
+                    pw.println("info/" + andId+"/speech/"+speech+"/sysdate/"+sysdate);
+                    pw.flush();
 
-                os=socket.getOutputStream();
-                pw=new PrintWriter(os,true);
-                pw.println("phone/"+andId);
-                pw.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-
         }
-
-    }
 }

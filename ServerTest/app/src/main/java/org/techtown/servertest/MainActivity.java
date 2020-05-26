@@ -17,7 +17,7 @@ import java.net.Socket;
 public class MainActivity extends AppCompatActivity {
     Socket socket;
     String andId;
-    SpeechAsyncTast speechAsyncTast;
+    SpeechAsyncTask speechAsyncTask;
     InputStream is;
     InputStreamReader isr;
     BufferedReader br;
@@ -28,21 +28,46 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        speechAsyncTast=new SpeechAsyncTast();
-        speechAsyncTast.execute(10,20);
+        speechAsyncTask=new SpeechAsyncTask();
+        speechAsyncTask.execute();
     }
 
 
-    class SpeechAsyncTast extends AsyncTask<Integer,String,String> {
+    class SpeechAsyncTask extends AsyncTask<Integer,String,String> {
 
         @Override
         protected String doInBackground(Integer... integers) {
             try {
-                socket=new Socket("121.131.215.143",12345);
+                socket=new Socket("70.12.116.63",12345);
                 Log.d("확인","socket다음");
                 if (socket!=null){
                     speechWork();
                 }
+                Thread t1=new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while(true){
+                            String msg;
+                            try{
+                                msg=br.readLine();
+                                Log.d("확인","서버로 부터 수신된 메시지>>"+msg);
+                            }catch (IOException e){
+                                try{
+                                    is.close();
+                                    isr.close();
+                                    br.close();
+                                    os.close();
+                                    pw.close();
+                                    socket.close();
+                                }catch (IOException e1){
+                                    e1.printStackTrace();
+                                }
+                                break;//반복문 빠져나가도록 설정
+                            }
+                        }
+                    }
+                });
+                t1.start();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -66,6 +91,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+            try {
+                if(socket!=null) {
+                    socket.close();
+                }
+                } catch (IOException e) {
+                e.printStackTrace();
+
+        }
     }
 }
