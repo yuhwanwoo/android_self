@@ -40,7 +40,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -116,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
         mRecognizer = SpeechRecognizer.createSpeechRecognizer(cThis);
         mRecognizer.setRecognitionListener(listener);
 
+        andId="noo";
+
         //음성 출력 생성, 리스너 초기화
         tts = new TextToSpeech(cThis, new TextToSpeech.OnInitListener() {
             @Override
@@ -179,8 +183,6 @@ public class MainActivity extends AppCompatActivity {
         //음성인식 (onCreate)      끝
         //******************************************************************
 
-        speechAsyncTast=new SpeechAsyncTast();
-        speechAsyncTast.execute();
     }
 
     private RecognitionListener listener = new RecognitionListener() {
@@ -218,6 +220,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onResults(Bundle results) {
             String key = "";
+            Date date=new Date(System.currentTimeMillis());
+            SimpleDateFormat sdfNow=new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");
+            String formatDate=sdfNow.format(date);
+
             key = SpeechRecognizer.RESULTS_RECOGNITION;
             ArrayList<String> mResult = results.getStringArrayList(key);
             String[] rs = new String[mResult.size()];
@@ -225,9 +231,11 @@ public class MainActivity extends AppCompatActivity {
 
             Log.i(LogTT, "입력값 : " + rs[0]);
             txtInMsg.setText(rs[0] + "\r\n" + txtInMsg.getText());
-            Log.i(LogTT, "입력값getText : " + txtInMsg.getText());
 
             FunVoiceOrderCheck(rs[0]);
+
+            speechAsyncTast=new SpeechAsyncTast();
+            speechAsyncTast.execute(rs[0],formatDate);
 
             mRecognizer.startListening(SttIntent); // 음성인식이 계속되는 구문이니 필요에 맞게 쓰길
         }
@@ -335,15 +343,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    class SpeechAsyncTast extends AsyncTask<Integer, String, String> {
-
+    class SpeechAsyncTast extends AsyncTask<String,String,String>{
         @Override
-        protected String doInBackground(Integer... integers) {
+        protected String doInBackground (String...strings){
             try {
                 socket = new Socket("70.12.227.93", 12345);
                 Log.d("확인", "socket다음");
                 if (socket != null) {
-                    speechWork();
+                    speechWork(strings[0],strings[1]);
                 }
                 Thread t1 = new Thread(new Runnable() {
                     @Override
@@ -377,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
             return "";
         }
 
-        void speechWork() {
+        void speechWork (String speech,String sysdate) {
             try {
                 is = socket.getInputStream();
                 isr = new InputStreamReader(is);
@@ -385,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
 
                 os = socket.getOutputStream();
                 pw = new PrintWriter(os, true);
-                pw.println("phone/" + andId);
+                pw.println("info/" + andId+"/speech/"+speech+"/sysdate/"+sysdate);
                 pw.flush();
 
             } catch (IOException e) {
@@ -393,6 +400,5 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
     }
 }
